@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-   throw new Error('Not implemented');
+   return new Date(value);
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-   throw new Error('Not implemented');
+   return new Date(value);
 }
 
 
@@ -56,7 +56,7 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-   throw new Error('Not implemented');
+   return (date.getFullYear() % 4 == 0 && date.getFullYear() % 100 != 0) || date.getFullYear() % 400 == 0;
 }
 
 
@@ -76,7 +76,33 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
 function timeSpanToString(startDate, endDate) {
-   throw new Error('Not implemented');
+   let differenceTime = endDate.getTime() - startDate.getTime();
+   let hours = Math.floor((differenceTime / (1000 * 60 * 60)) % 24) + '';
+   hours = plus0(hours, 2);
+
+   let minutes = Math.floor((differenceTime / (1000 * 60)) % 60) + '';
+   minutes = plus0(minutes, 2);
+
+   let seconds = Math.floor((differenceTime / 1000) % 60) + '';
+   seconds = plus0(seconds, 2);
+
+   let mSeconds = (differenceTime % 1000) + '';
+   mSeconds = plus0(mSeconds, 3);
+
+   function plus0 (str, count) {
+      let result = '';
+      if (str.length < count) {
+         for (let i = 1; i < count; i++) {
+            result += '0';
+         }
+         result += str;
+         return result;
+      } else {
+         return str;
+      }
+   }
+
+   return hours + ':' + minutes + ':' + seconds + '.' + mSeconds;
 }
 
 
@@ -94,7 +120,19 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+   const formatAmPm = 12;
+   const degree180 = 180;
+   const degree360 = 360;
+   const perMinute = 0.5;
+   const minInHours = 60;
+
+   let hours = date.getUTCHours() % formatAmPm;
+   let minutes = date.getUTCMinutes();   
+
+   let degree = Math.abs(perMinute*(minInHours*hours - 11*minutes));
+   degree = degree > degree180 ? degree360 - degree : degree;
+
+   return degree*(Math.PI/180);
 }
 
 
