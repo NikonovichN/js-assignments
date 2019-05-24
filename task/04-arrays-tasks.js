@@ -502,7 +502,11 @@ function getIdentityMatrix(n) {
  *     3, 3   => [ 3 ]
  */
 function getIntervalArray(start, end) {
-   throw new Error('Not implemented');
+   let arr = [];
+   arr.length = end - start + 1;
+   arr.fill(0);
+
+   return arr.map((item) => { return start++; });
 }
 
 /**
@@ -517,7 +521,14 @@ function getIntervalArray(start, end) {
  *   [ 1, 1, 2, 2, 3, 3, 4, 4] => [ 1, 2, 3, 4]
  */
 function distinct(arr) {
-   throw new Error('Not implemented');
+   let newArr = [];
+   arr.map((item, index) => { 
+      if (newArr.indexOf(item) < 0) {
+         newArr.push(item);
+      }
+   });
+
+   return newArr;
 }
 
 /**
@@ -551,7 +562,13 @@ function distinct(arr) {
  *   }
  */
 function group(array, keySelector, valueSelector) {
-   throw new Error('Not implemented');
+   let map = array.reduce((accumulator, currentValue) => {
+      accumulator[keySelector(currentValue)] = accumulator[keySelector(currentValue)] || [];
+      accumulator[keySelector(currentValue)].push(valueSelector(currentValue));      
+      return accumulator;
+   }, []);
+
+   return Object.entries(map);
 }
 
 
@@ -567,7 +584,10 @@ function group(array, keySelector, valueSelector) {
  *   ['one','two','three'], x=>x.split('')  =>   ['o','n','e','t','w','o','t','h','r','e','e']
  */
 function selectMany(arr, childrenSelector) {
-    throw new Error('Not implemented');
+   return arr.reduce((accumulator, currentValue) => {
+      let subArr = childrenSelector(currentValue);
+      return [...accumulator, ...subArr];
+   }, []);
 }
 
 
@@ -584,7 +604,11 @@ function selectMany(arr, childrenSelector) {
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
 function getElementByIndexes(arr, indexes) {
-    throw new Error('Not implemented');
+   return indexes.reduce((accumulator, currentValue) => {
+      let save = accumulator[currentValue]
+      accumulator = save;
+      return accumulator;
+   }, arr);
 }
 
 
@@ -607,7 +631,22 @@ function getElementByIndexes(arr, indexes) {
  * 
  */
 function swapHeadAndTail(arr) {
-    throw new Error('Not implemented');
+   if (arr.length == 1 || arr.length == 0) {
+      return arr;
+   }
+   if (arr.length % 2 != 0) {
+      let center = Math.floor(arr.length/2);
+      let subArrStart = arr.slice(0, center);
+      let subArrEnd = arr.slice(center+1, arr.length);
+
+      return [...subArrEnd, arr[center], ...subArrStart];
+   } else {
+      let center = arr.length/2;
+      let subArrStart = arr.slice(0, center);
+      let subArrEnd = arr.slice(center, arr.length);
+
+      return [...subArrEnd, ...subArrStart];
+   }
 }
 
 
