@@ -234,7 +234,15 @@ function findFirstSingleChar(str) {
  *
  */
 function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
-    throw new Error('Not implemented');
+    let openSymbol = isStartIncluded == true ? '[' : '(';
+    let closeSymbol = isEndIncluded == true ? ']' : ')';
+    if (a > b) {
+        let tmp = b;
+        b = a;
+        a = tmp;
+    }
+
+    return `${openSymbol}${a}, ${b}${closeSymbol}`
 }
 
 
@@ -251,7 +259,9 @@ function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
  * 'noon' => 'noon'
  */
 function reverseString(str) {
-    throw new Error('Not implemented');
+    let strArray = str.split('');
+    let arrayReverse = strArray.reverse();
+    return arrayReverse.join('');
 }
 
 
@@ -268,7 +278,12 @@ function reverseString(str) {
  *   34143 => 34143
  */
 function reverseInteger(num) {
-    throw new Error('Not implemented');
+    let strNumber = '' + num;
+    let arrNumber = strNumber.split('');
+    let arrReverse = arrNumber.reverse();
+    num = arrReverse.join('');
+
+    return +num;
 }
 
 
@@ -293,7 +308,13 @@ function reverseInteger(num) {
  *   4916123456789012 => false
  */
 function isCreditCardNumber(ccn) {
-    throw new Error('Not implemented');
+    ccn = '' + ccn;
+    return ccn.split('')
+        .reverse()
+        .map((x) => parseInt(x, 10))
+        .map((x,idx) => idx % 2 ? x * 2 : x)
+        .map((x) => x > 9 ? (x % 10) + 1 : x)
+        .reduce((accum, x) => accum += x) % 10 === 0;
 }
 
 
@@ -312,7 +333,19 @@ function isCreditCardNumber(ccn) {
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
 function getDigitalRoot(num) {
-    throw new Error('Not implemented');
+    num += '';
+    let arrNumbers = num.split('');
+    let sum = 0;
+
+    for (let i = 0; i < arrNumbers.length; i++) {
+        sum += +arrNumbers[i];
+    }
+ 
+    if (sum > 9) {
+        return getDigitalRoot(sum);
+    } else {
+        return sum;
+    }
 }
 
 
@@ -338,7 +371,54 @@ function getDigitalRoot(num) {
  *   '{[(<{[]}>)]}' = true 
  */
 function isBracketsBalanced(str) {
-    throw new Error('Not implemented');
+    if( str.length % 2 != 0 ){
+        return false;
+    }
+
+    let Balance = 0;
+    let stackBalance = [];
+    let openBrackets = '[{(<';
+    let closeBrackets = ']})>';
+
+    function isOpenBrackets (char) {  
+        let i = openBrackets.indexOf(char);      
+        if (i >= 0) {
+            stackBalance.push(i);
+            return true;
+        } else if (char == closeBrackets[i]) {
+            return false;
+        }       
+    }
+
+    function isColseForOpen (char) {
+        return closeBrackets.indexOf(char) == stackBalance[stackBalance.length-1];
+    }
+
+    for (let i = 0; i < str.length; i++) {
+        if (isOpenBrackets(str[i])) {
+            Balance++;
+
+            for (let j = i+1; j < str.length; j++) {
+                if (isColseForOpen(str[j]) && (j - i) % 2 != 0) {
+                    break;
+                } else if (str.length-1 == j) {
+                    return false;
+                }
+            }
+        } else {
+            Balance--;
+        }
+
+        if (Balance < 0) {
+            return false;
+        }
+    }
+
+    if (Balance == 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
@@ -374,7 +454,64 @@ function isBracketsBalanced(str) {
  *
  */
 function timespanToHumanString(startDate, endDate) {
-    throw new Error('Not implemented');
+    function isInteger(num) {
+        return (num ^ 0) === num;
+    }
+
+    let diffTime = endDate.getTime() - startDate.getTime();
+    let seconds = diffTime / 1000;
+
+    if (seconds <= 45) {
+        return 'a few seconds ago';
+    } else if (seconds > 45 && seconds <= 90) {
+        return 'a minute ago';
+    } else if (seconds > 90 && seconds <= 45*60) {
+        let minutes = 0;
+        if (isInteger(seconds)) {
+            minutes = Math.floor(seconds/60);
+        } else {
+            minutes = Math.ceil(seconds/60);
+        }
+        return `${minutes} minutes ago`;
+    } else if (seconds > 45*60 && seconds <= 90*60) {
+        return 'an hour ago';
+    } else if (seconds > 90*60 && seconds <= 22*60*60) {
+        let hours = 0;
+        if (isInteger(seconds)) {
+            hours = Math.floor(seconds/3600);
+        } else {
+            hours = Math.ceil(seconds/3600);
+        }
+        return `${hours} hours ago`;
+    } else if (seconds > 22*60*60 && seconds <= 36*60*60) {
+        return 'a day ago';
+    } else if (seconds > 36*60*60 && seconds <= 25*24*60*60) {
+        let days = 0;
+        if (isInteger(seconds)) {
+            days = Math.floor(seconds/3600/24);
+        } else {
+            days = Math.ceil(seconds/3600/24);
+        }
+        return `${days} days ago`;
+    } else if (seconds > 25*24*60*60 && seconds <= 45*24*60*60) {
+        return 'a month ago';
+    } else if (seconds > 45*24*60*60 && seconds <= 345*24*60*60) {
+        let sMonth = startDate.getMonth();
+        let eMonth = endDate.getMonth();
+        if (sMonth == 0 && eMonth != 12) {
+            eMonth++;
+        } 
+        if (sMonth == 0 && eMonth == 12) {
+            eMonth--;
+        }
+        return `${eMonth-sMonth} months ago`;
+    } else if (seconds > 345*24*60*60 && seconds <= 545*24*60*60) {
+        return 'a year ago';
+    } else if (seconds > 545*24*60*60) {
+        let sYear = startDate.getFullYear();
+        let eYear = endDate.getFullYear();
+        return `${eYear - sYear} years ago`;
+    }
 }
 
 
@@ -398,7 +535,7 @@ function timespanToHumanString(startDate, endDate) {
  *    365, 10 => '365'
  */
 function toNaryString(num, n) {
-    throw new Error('Not implemented');
+    return num.toString(n);
 }
 
 
@@ -415,7 +552,34 @@ function toNaryString(num, n) {
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
 function getCommonDirectoryPath(pathes) {
-    throw new Error('Not implemented');
+    let i = 1;
+    let result = pathes[0];
+
+    while (i < pathes.length) {
+        let path1 = result;
+        let path2 = pathes[i];
+
+        for (let j = 0; j < path2.length; j++) {
+            if (path1.length == j) {
+                break;
+            }
+
+            if (path1[j] != path2[j] && j == 0) {
+                result = '';
+            } else if (path1[j] != path2[j]) {
+                result = result.slice(0, j);
+                break;
+            }
+        }
+
+        i++;
+    }
+
+    if (result.length == 0) {
+        return '';
+    } else {        
+        return result.slice(0, result.lastIndexOf('/')+1);
+    }
 }
 
 
